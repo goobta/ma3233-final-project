@@ -1,4 +1,7 @@
-from typing import List, Set
+from typing import Dict, List, Set, Tuple
+from concurrent import futures
+import itertools
+
 from . import graph_types as t
 
 
@@ -7,12 +10,20 @@ class HamiltonianEvaluator:
     """Create a new HamiltonianEvaluator.
 
     Args:
-        edges (List[t.edge]): The edge set
+        edges (List[t.edge]): The entire graph's edge set
     """
     self.edges: List[t.edge] = edges
     self.vertices: Set[t.vertex] = {v for e in self.edges for v in e}
 
   def is_hamiltonian(self, edges: List[t.edge]) -> bool:
+    """Check if the edges make a hamiltonian cycle.
+
+    Args:
+      edges (List[t.edge]): the edges which make up the proposed cycle
+
+    Returns:
+      bool: Whether or not the cycle is hamiltonian
+    """
     # Edge Count constraint
     if len(edges) != len(self.vertices):
       return False
@@ -38,3 +49,16 @@ class HamiltonianEvaluator:
       if degree != 2 or leader != first_leader:
         return False
     return True
+
+  def generate_truth_table(self) -> Dict[Tuple[t.edge, ...], bool]:
+    """Make a map from possible V-cycles to whether or not they are
+    hamiltonian. Can be used to make the oracle.
+
+    Returns:
+      Dict[Tuple[t.edge, ...], bool]: A dict from all possible V-cycles
+        and if they are hamiltonian
+    """
+    executor = futures.ProcessPoolExecutor()
+    iter1, iter2 = itertools.tee(itertools.combinations(self.edges, 
+                                                        len(self.vertices)))
+    return {e: is_ham for e, is_ham in zip(iter1, executor.map(iter2))}

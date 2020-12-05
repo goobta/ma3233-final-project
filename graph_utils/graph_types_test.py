@@ -36,5 +36,31 @@ class TestHamiltonianEvaluator(unittest.TestCase):
     evlr = ge.HamiltonianEvaluator(edge_set)
     self.assertEqual(evlr.is_hamiltonian(edges), is_hamiltonian)
 
+  def test_truth_table(self):
+    """
+            Test Graph
+         A---------------B
+         |-\          -- |
+         |  -\      -/   |
+         |    --\--/     |
+         |    --/--\     |
+         |  -/      -\   |
+         |-/          -- |
+         D-------------- C
+    """
+    edge_set = [('A', 'B'), ('B', 'C'), ('C', 'D'), 
+                ('D', 'A'), ('A', 'C'), ('B', 'D')]
+    truth = (('A', 'B'), ('B', 'C'), ('C', 'D'), ('A', 'D'))
+
+    evlr = ge.HamiltonianEvaluator(edge_set)
+    truth_table = evlr.generate_truth_table()
+
+    for edges, is_hamiltonian in truth_table.items():
+      if edges == truth_table:
+        self.assertTrue(is_hamiltonian)
+      else:
+        self.assertFalse(is_hamiltonian)
+
+
 if __name__ == '__main__':
   unittest.main()
