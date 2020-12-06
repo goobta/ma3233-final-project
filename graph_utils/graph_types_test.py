@@ -84,11 +84,9 @@ class TestGroverSearch(unittest.TestCase):
                         [('A', 'B'), ('C', 'D'), ('A', 'C'), ('B', 'D')],
                         [('B', 'C'), ('D', 'A'), ('A', 'C'), ('B', 'D')]]
         result = run_grovers(edge_set, True)
+        self.assertTrue(result in valid_cycles)
 
-        value = result in valid_cycles
-        self.assertTrue(value)
-
-    def larger_graph(self):
+    def test_larger_graph(self):
         """
               Test Graph
             A-----------D
@@ -101,9 +99,14 @@ class TestGroverSearch(unittest.TestCase):
            \|           |/
             B-----------F
         """
+        edge_set = [('A', 'B'), ('A', 'D'), ('A', 'C'), ('D', 'E'),
+                    ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
+        valid_cycle = [('A', 'D'), ('A', 'C'), ('D', 'E'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
+        result = run_grovers(edge_set, True)
+        self.assertTrue(result == valid_cycle)
 
-    def disconnected_graph(self):
-        """
+    def test_disconnected_graph(self):
+        """Causes an Oracle of None which crashes the Grover search
               Test Graph
             A           D
            /|           |\
@@ -115,6 +118,26 @@ class TestGroverSearch(unittest.TestCase):
            \|           |/
             B           F
         """
+        edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
+                    ('D', 'F'), ('C', 'B'), ('E', 'F')]
+        self.assertTrue(run_grovers(edge_set, True) == [])
+
+    def test_disconnected_graph_with_extra_edge(self):
+        """
+                  Test Graph
+                A           D
+               /|           |\
+              / |           | \
+             /  |           |  \
+            C   |           |   E
+             \  |           |  /
+              \ |           | /
+               \|           |/
+                B-----------F
+        """
+        edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
+                    ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
+        self.assertTrue(run_grovers(edge_set, True) == [])
 
 
 if __name__ == '__main__':

@@ -12,6 +12,24 @@ import graph_types as t
 # from . import graph_types as t
 
 
+def call_grover(truth_map, num_vertices) -> dict:
+    """Call the simulation for grover's algorithm with the truth map and time its execution
+
+    :param truth_map: The string bitmap
+    :param num_vertices: Number of vertices of the graph for documentation purposes
+    :return: the GroverResult item
+    """
+    start = time()
+
+    oracle = TruthTableOracle(truth_map)
+    grover = Grover(oracle)  # Wow that's nice that this already exists
+    result = grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=1024))
+
+    end = time()
+    print('Grover\'s search on n = {} vertices:\nTime elapsed: {}s\n'.format(num_vertices, end - start))
+    return result
+
+
 def get_truth_map(truth_table) -> str:
     """Take in a dictionary truth mapping and convert it to the readable bitmap
 
@@ -42,28 +60,29 @@ def run_grovers(graph_edge_set: List[t.edge], plot: bool = False) -> List[t.edge
     :param plot:
         True if you want it plotted by the visualizer.
     :return:
-        A subset of the graph_edge_set that is a Hamilton cycle, or None if one does not exist.
+        A subset of the graph_edge_set that is a Hamilton cycle, or an empty list if one does not exist.
             Returns the subset in the same form as the edge set input.
     """
     evaluator = HamiltonianEvaluator(graph_edge_set)
     truth_table = evaluator.generate_truth_table()
     truth_map = get_truth_map(truth_table)
+    if len(truth_map) <= 1:
+        print('Unable to run Grover\'s search. Not enough combinations\n')
+        return []
 
-    start = time()
-    oracle = TruthTableOracle(truth_map)
-    grover = Grover(oracle)  # Wow that's nice that this already exists
-    result = grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=1024))
-    end = time()
-    print('Grover\'s search on n = {} vertices:\nTime elapsed: {}s'.format(len(evaluator.vertices), end - start))
+    result = call_grover(truth_map, len(evaluator.vertices))
 
     if plot:
         plot_histogram(result['measurement'])
-        #result['circuit'].draw(ouput='mpl', filename='grover_circuit{}.png'.format(truth_map))
+        # result['circuit'].draw(ouput='mpl', filename='grover_circuit{}.png'.format(truth_map))
         # can't draw the circuit for some reason which is a bit frustrating
 
-    # result[top_measurement] gives the binary number of the index of the map
-    # This is a terrifying amount of casts
+    # result[top_measurement] gives the binary number of the index of the found edge set
     index = int(result['top_measurement'], 2)
-    result = list(truth_table.items())
-    result = list(result[index][0])
-    return result
+    result = list(truth_table.items())[index]
+
+    # Check the result against the Oracle (Truth Table here) and return the edge set
+    if result[1]:
+        return list(result[0])
+    else:
+        return []
