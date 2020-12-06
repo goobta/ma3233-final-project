@@ -55,13 +55,13 @@ def get_truth_map(truth_table) -> str:
 def run_grovers(graph_edge_set: List[t.edge], plot: bool = False, graph_str: str = None) -> List[t.edge]:
     """Run Grover's Algorithm on the given graph edge set
 
-    :param graph_str:
-        An optional string representation of the graph to be printed
     :param graph_edge_set:
         The set of edges for the graph. Comes in a list of Tuple[u, v] form.
             Tuple[u,v] is an edge in E where u and v are vertices in V.
     :param plot:
         True if you want it plotted by the visualizer.
+    :param graph_str:
+        An optional string representation of the graph to be printed.
     :return:
         A subset of the graph_edge_set that is a Hamilton cycle, or an empty list if one does not exist.
             Returns the subset in the same form as the edge set input.
