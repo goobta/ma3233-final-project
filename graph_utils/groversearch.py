@@ -10,6 +10,7 @@ from time import time
 from evaluators import HamiltonianEvaluator
 import graph_types as t
 # from . import graph_types as t
+# Gave me an error when using it this way, revert back if needed
 
 
 def call_grover(truth_map, num_vertices) -> dict:
@@ -51,9 +52,11 @@ def get_truth_map(truth_table) -> str:
     return binary_repr
 
 
-def run_grovers(graph_edge_set: List[t.edge], plot: bool = False) -> List[t.edge]:
+def run_grovers(graph_edge_set: List[t.edge], plot: bool = False, graph_str: str = None) -> List[t.edge]:
     """Run Grover's Algorithm on the given graph edge set
 
+    :param graph_str:
+        An optional string representation of the graph to be printed
     :param graph_edge_set:
         The set of edges for the graph. Comes in a list of Tuple[u, v] form.
             Tuple[u,v] is an edge in E where u and v are vertices in V.
@@ -63,19 +66,22 @@ def run_grovers(graph_edge_set: List[t.edge], plot: bool = False) -> List[t.edge
         A subset of the graph_edge_set that is a Hamilton cycle, or an empty list if one does not exist.
             Returns the subset in the same form as the edge set input.
     """
+    if graph_str is not None:
+        print(graph_str)
+
     evaluator = HamiltonianEvaluator(graph_edge_set)
     truth_table = evaluator.generate_truth_table()
     truth_map = get_truth_map(truth_table)
     if len(truth_map) <= 1:
-        print('Unable to run Grover\'s search. Not enough combinations\n')
+        print('Unable to run Grover\'s search. Not enough edge combinations.\n')
         return []
 
     result = call_grover(truth_map, len(evaluator.vertices))
 
     if plot:
         plot_histogram(result['measurement'])
-        # result['circuit'].draw(ouput='mpl', filename='grover_circuit{}.png'.format(truth_map))
-        # can't draw the circuit for some reason which is a bit frustrating
+        result['circuit'].draw(output='mpl', filename='circuit_drawings/grover_circuit{}.png'.format(truth_map))
+        print(result['circuit'].draw())
 
     # result[top_measurement] gives the binary number of the index of the found edge set
     index = int(result['top_measurement'], 2)

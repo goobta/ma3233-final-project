@@ -67,77 +67,70 @@ class TestHamiltonianEvaluator(unittest.TestCase):
 
 class TestGroverSearch(unittest.TestCase):
     def test_grover(self):
-        """
-                Test Graph
-             A---------------B
-             |-\          -- |
-             |  -\      -/   |
-             |    --\--/     |
-             |    --/--\     |
-             |  -/      -\   |
-             |-/          -- |
-             D-------------- C
-        """
+        graph_str = '''
+    A---------------B
+    |-\          -- |
+    |  -\      -/   |
+    |    --\--/     |
+    |    --/--\     |
+    |  -/      -\   |
+    |-/          -- |
+    D-------------- C'''
         edge_set = [('A', 'B'), ('B', 'C'), ('C', 'D'),
                     ('D', 'A'), ('A', 'C'), ('B', 'D')]
         valid_cycles = [[('A', 'B'), ('B', 'C'), ('C', 'D'), ('D', 'A')],
                         [('A', 'B'), ('C', 'D'), ('A', 'C'), ('B', 'D')],
                         [('B', 'C'), ('D', 'A'), ('A', 'C'), ('B', 'D')]]
-        result = run_grovers(edge_set, True)
+        result = run_grovers(edge_set, True, graph_str)
         self.assertTrue(result in valid_cycles)
 
     def test_larger_graph(self):
-        """
-              Test Graph
-            A-----------D
-           /|           |\
-          / |           | \
-         /  |           |  \
-        C   |           |   E
-         \  |           |  /
-          \ |           | /
-           \|           |/
-            B-----------F
-        """
+        graph_str = '''
+        A-----------D
+       /|           |\\
+      / |           | \\
+     /  |           |  \\
+    C   |           |   E
+     \  |           |  /
+      \ |           | /
+       \|           |/
+        B-----------F
+        '''
         edge_set = [('A', 'B'), ('A', 'D'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
         valid_cycle = [('A', 'D'), ('A', 'C'), ('D', 'E'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
-        result = run_grovers(edge_set, True)
+        result = run_grovers(edge_set, True, graph_str)
         self.assertTrue(result == valid_cycle)
 
     def test_disconnected_graph(self):
-        """Causes an Oracle of None which crashes the Grover search
-              Test Graph
-            A           D
-           /|           |\
-          / |           | \
-         /  |           |  \
-        C   |           |   E
-         \  |           |  /
-          \ |           | /
-           \|           |/
-            B           F
-        """
+        graph_str = '''
+        A           D
+       /|           |\\
+      / |           | \\
+     /  |           |  \\
+    C   |           |   E
+     \  |           |  /
+      \ |           | /
+       \|           |/
+        B           F'''
         edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F')]
-        self.assertTrue(run_grovers(edge_set, True) == [])
+        self.assertTrue(run_grovers(edge_set, True, graph_str) == [])
 
     def test_disconnected_graph_with_extra_edge(self):
-        """
-                  Test Graph
-                A           D
-               /|           |\
-              / |           | \
-             /  |           |  \
-            C   |           |   E
-             \  |           |  /
-              \ |           | /
-               \|           |/
-                B-----------F
-        """
+        graph_str = '''
+        A           D
+       /|           |\\
+      / |           | \\
+     /  |           |  \\
+    C   |           |   E
+     \  |           |  /
+      \ |           | /
+       \|           |/
+        B-----------F'''
         edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
-        self.assertTrue(run_grovers(edge_set, True) == [])
+        self.assertTrue(run_grovers(edge_set, True, graph_str) == [])
 
 
 if __name__ == '__main__':
