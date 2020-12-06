@@ -84,7 +84,7 @@ class TestGroverSearch(unittest.TestCase):
         result = run_grovers(edge_set, True, graph_str)
         self.assertTrue(result in valid_cycles)
 
-    def test_larger_graph(self):
+    def test_six_vert_graph(self):
         graph_str = '''
         A-----------D
        /|           |\\
@@ -131,6 +131,13 @@ class TestGroverSearch(unittest.TestCase):
         edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
         self.assertTrue(run_grovers(edge_set, True, graph_str) == [])
+
+    def test_large_graph(self):
+        graph_str = '''
+        
+        
+        '''
+        pass
 
 
 if __name__ == '__main__':
