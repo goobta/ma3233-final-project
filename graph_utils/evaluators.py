@@ -2,7 +2,8 @@ from typing import Dict, List, Set, Tuple
 from concurrent import futures
 import itertools
 
-from . import graph_types as t
+import graph_types as t
+# from . import graph_types as t
 
 
 class HamiltonianEvaluator:
@@ -61,4 +62,5 @@ class HamiltonianEvaluator:
     executor = futures.ProcessPoolExecutor()
     iter1, iter2 = itertools.tee(itertools.combinations(self.edges, 
                                                         len(self.vertices)))
-    return {e: is_ham for e, is_ham in zip(iter1, executor.map(iter2))}
+    result = {e: is_ham for e, is_ham in zip(iter1, executor.map(self.is_hamiltonian, iter2))}
+    return result
