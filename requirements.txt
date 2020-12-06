@@ -1,2 +1,5 @@
 jupyter
-jupytext
+qiskit
+parameterized
+matplotlib
+pylatexenc
