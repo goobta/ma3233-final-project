@@ -2,8 +2,8 @@ from typing import Dict, List, Set, Tuple
 from concurrent import futures
 import itertools
 
-import graph_types as t
-# from . import graph_types as t
+# import graph_types as t
+from . import graph_types as t
 
 
 class HamiltonianEvaluator:

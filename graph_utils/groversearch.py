@@ -7,9 +7,10 @@ from qiskit.aqua.components.oracles import TruthTableOracle
 from typing import List
 from time import time
 
-from evaluators import HamiltonianEvaluator
-import graph_types as t
-# from . import graph_types as t
+# from evaluators import HamiltonianEvaluator
+# import graph_types as t
+from . import graph_types as t
+from . evaluators import HamiltonianEvaluator
 # Gave me an error when using it this way, revert back if needed
 
 

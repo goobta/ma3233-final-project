@@ -1,3 +1,5 @@
 jupyter
 qiskit
 parameterized
+matplotlib
+pylatexenc
