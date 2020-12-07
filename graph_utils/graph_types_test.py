@@ -82,6 +82,7 @@ class TestGroverSearch(unittest.TestCase):
                         [('A', 'B'), ('C', 'D'), ('A', 'C'), ('B', 'D')],
                         [('B', 'C'), ('D', 'A'), ('A', 'C'), ('B', 'D')]]
         result = run_grovers(edge_set, True, graph_str)
+        print('Found cycle with edges: {}'.format(result))
         self.assertTrue(result in valid_cycles)
 
     def test_six_vert_graph(self):
@@ -100,6 +101,7 @@ class TestGroverSearch(unittest.TestCase):
                     ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
         valid_cycle = [('A', 'D'), ('A', 'C'), ('D', 'E'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
         result = run_grovers(edge_set, True, graph_str)
+        print('Found cycle with edges: {}'.format(result))
         self.assertTrue(result == valid_cycle)
 
     def test_disconnected_graph(self):
@@ -115,7 +117,9 @@ class TestGroverSearch(unittest.TestCase):
         B           F'''
         edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F')]
-        self.assertTrue(run_grovers(edge_set, True, graph_str) == [])
+        result = run_grovers(edge_set, True, graph_str)
+        print('Found cycle with edges: '.format(result))
+        self.assertTrue(result == [])
 
     def test_disconnected_graph_with_extra_edge(self):
         graph_str = '''
@@ -130,7 +134,9 @@ class TestGroverSearch(unittest.TestCase):
         B-----------F'''
         edge_set = [('A', 'B'), ('A', 'C'), ('D', 'E'),
                     ('D', 'F'), ('C', 'B'), ('E', 'F'), ('B', 'F')]
-        self.assertTrue(run_grovers(edge_set, True, graph_str) == [])
+        result = run_grovers(edge_set, True, graph_str)
+        print('Found cycle with edges: '.format(result))
+        self.assertTrue(result == [])
 
     def test_large_graph(self):
         graph_str = '''
@@ -138,6 +144,12 @@ class TestGroverSearch(unittest.TestCase):
         
         '''
         pass
+
+
+class TestNaiveSearch(unittest.TestCase):
+    def test_search(self):
+        pass
+
 
 
 if __name__ == '__main__':

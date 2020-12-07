@@ -4,17 +4,16 @@ from qiskit.aqua import QuantumInstance
 from qiskit.aqua.algorithms import Grover
 from qiskit.aqua.components.oracles import TruthTableOracle
 
-from typing import List
+from typing import Dict, Tuple, List
 from time import time
 
-# from evaluators import HamiltonianEvaluator
-# import graph_types as t
+#from evaluators import HamiltonianEvaluator
+#import graph_types as t
 from . import graph_types as t
 from . evaluators import HamiltonianEvaluator
-# Gave me an error when using it this way, revert back if needed
 
 
-def call_grover(truth_map, num_vertices) -> dict:
+def call_grover(truth_map: str, num_vertices: int) -> dict:
     """Call the simulation for grover's algorithm with the truth map and time its execution
 
     :param truth_map: The string bitmap
@@ -32,7 +31,7 @@ def call_grover(truth_map, num_vertices) -> dict:
     return result
 
 
-def get_truth_map(truth_table) -> str:
+def get_truth_map(truth_table: Dict[Tuple[t.edge, ...], bool]) -> str:
     """Take in a dictionary truth mapping and convert it to the readable bitmap
 
     :param truth_table: The tuple:bool dictionary
@@ -40,8 +39,8 @@ def get_truth_map(truth_table) -> str:
     """
     # Oracle takes a string representation of the binary truth table like '1100001'
     binary_repr = ''
-    for key in truth_table:
-        binary_repr += str(int(truth_table[key]))  # Abuse of casting to send True -> 1 -> '1'
+    for key, val in truth_table.items():
+        binary_repr += str(int(val))  # Abuse of casting to send True -> 1 -> '1'
 
     # Length of bitmap needs to be a power of 2
     # This bitwise operation checks to see that the value of length is in fact a power of 2
@@ -73,6 +72,7 @@ def run_grovers(graph_edge_set: List[t.edge], plot: bool = False, graph_str: str
     evaluator = HamiltonianEvaluator(graph_edge_set)
     truth_table = evaluator.generate_truth_table()
     truth_map = get_truth_map(truth_table)
+
     if len(truth_map) <= 1:
         print('Unable to run Grover\'s search. Not enough edge combinations.\n')
         return []
@@ -80,8 +80,10 @@ def run_grovers(graph_edge_set: List[t.edge], plot: bool = False, graph_str: str
     result = call_grover(truth_map, len(evaluator.vertices))
 
     if plot:
-        plot_histogram(result['measurement'])
-        result['circuit'].draw(output='mpl', filename='circuit_drawings/grover_circuit{}.png'.format(truth_map))
+        plot_histogram(result['measurement'])  # One for Jupyter
+        # plot_histogram(result['measurement']).savefig('visualizations/measurement{}.png'.format(truth_map))  # One
+        # for me
+        result['circuit'].draw(output='mpl', filename='visualizations/grover_circuit{}.png'.format(truth_map))
         print(result['circuit'].draw())
 
     # result[top_measurement] gives the binary number of the index of the found edge set
