@@ -14,7 +14,7 @@ from . evaluators import HamiltonianEvaluator
 # Gave me an error when using it this way, revert back if needed
 
 
-def call_grover(truth_map, num_vertices) -> dict:
+def call_grover(truth_map, num_vertices, shots=1024) -> dict:
     """Call the simulation for grover's algorithm with the truth map and time its execution
 
     :param truth_map: The string bitmap
@@ -25,7 +25,7 @@ def call_grover(truth_map, num_vertices) -> dict:
 
     oracle = TruthTableOracle(truth_map)
     grover = Grover(oracle)  # Wow that's nice that this already exists
-    result = grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=1024))
+    result = grover.run(QuantumInstance(BasicAer.get_backend('qasm_simulator'), shots=shots))
 
     end = time()
     print('Grover\'s search on n = {} vertices:\nTime elapsed: {}s\n'.format(num_vertices, end - start))
