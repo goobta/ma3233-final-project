@@ -1,1 +1,7 @@
-# MA3233-Final-Project
+# Solving TSP with Quantum Computing [ma3233 final project]
+
+## Running the code
+First you need to install the base requirements: 
+`pip install -r requirements.txt`. Then run `jupyter notebook` from the
+root directory and explore the jupyter notebooks to see examples of
+how to use our code base.
